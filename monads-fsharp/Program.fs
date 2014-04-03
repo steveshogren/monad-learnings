@@ -24,6 +24,20 @@ let lacceptable account =
        else false
     else false
     
+let deposit amount account = Some account + amount
+let withdraw amount account = 
+    let acc = account - amount    
+    if (acc < 0) then None
+    else Some acc
+    
+let pipeInto (m, f) = m |> f
+
+let (>>=) m f = pipeInto(m,f)
+    
+let acceptable account =
+     withdraw 100 account
+     >>= deposit 200
+     >>= withdraw 100
 
 [<EntryPoint>]
 let main args = 

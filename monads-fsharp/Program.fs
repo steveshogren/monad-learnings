@@ -24,15 +24,14 @@ let lacceptable account =
        else false
     else false
     
-let deposit amount account = Some account + amount
+let deposit amount account = Some(account + amount)
 let withdraw amount account = 
     let acc = account - amount    
-    if (acc < 0) then None
+    if acc < 0 
+    then None
     else Some acc
     
-let pipeInto (m, f) = m |> f
-
-let (>>=) m f = pipeInto(m,f)
+let (>>=) m f = Option.bind f m
     
 let acceptable account =
      withdraw 100 account
@@ -43,5 +42,7 @@ let acceptable account =
 let main args = 
     Console.WriteLine("Account at 100: " + lacceptable(101).ToString())
     Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
+    Console.WriteLine("Account at 100: " + acceptable(101).ToString())
+    Console.WriteLine("Account at 50: " + acceptable(50).ToString())
     0
 

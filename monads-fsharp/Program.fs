@@ -6,6 +6,7 @@
 module monadsfsharp.Main
 
 open System
+open TestPatterns
 
 let someFunction x y = x + y
 
@@ -33,13 +34,24 @@ let withdraw amount account =
     
 let (>>=) m f = Option.bind f m
     
-let acceptable account =
+let acceptable account : int option =
      withdraw 100 account
      >>= deposit 200
      >>= withdraw 100
-
+     
+let convert(lang, number) = function
+        | Language.English, 0 -> "zero" 
+        | Language.English, 1 -> "one"
+        | Language.English, _ -> "..."
+        | Language.Spanish, 0 -> "zero" 
+        | Language.Spanish, 1 -> "uno" 
+        | Language.Spanish, _ -> "~~~"
+        
+     
 [<EntryPoint>]
 let main args = 
+    //Console.WriteLine("Converted to " +  TestPatterns.convert(1, Language.English))
+    Console.WriteLine("Converted to " +  convert(Language.English, 1))
     Console.WriteLine("Account at 100: " + lacceptable(101).ToString())
     Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
     Console.WriteLine("Account at 100: " + acceptable(101).ToString())

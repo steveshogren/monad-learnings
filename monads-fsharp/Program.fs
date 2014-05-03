@@ -39,7 +39,7 @@ let acceptable account : int option =
      >>= deposit 200
      >>= withdraw 100
      
-let convert(lang, number) = function
+let convert = function
         | Language.English, 0 -> "zero" 
         | Language.English, 1 -> "one"
         | Language.English, _ -> "..."
@@ -51,7 +51,8 @@ let convert(lang, number) = function
 [<EntryPoint>]
 let main args = 
     //Console.WriteLine("Converted to " +  TestPatterns.convert(1, Language.English))
-    Console.WriteLine("Converted to " +  convert(Language.English, 1))
+    let x = convert(Language.English, 1)
+    Console.WriteLine("Converted to " +  x)
     Console.WriteLine("Account at 100: " + lacceptable(101).ToString())
     Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
     Console.WriteLine("Account at 100: " + acceptable(101).ToString())

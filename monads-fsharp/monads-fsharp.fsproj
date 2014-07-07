@@ -41,10 +41,4 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" />
-  <ItemGroup>
-    <ProjectReference Include="..\TestPatterns\TestPatterns.csproj">
-      <Project>{6447FD51-25FC-47F2-82B0-24A99DEE7DE6}</Project>
-      <Name>TestPatterns</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

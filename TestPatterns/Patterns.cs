@@ -2,6 +2,28 @@ using System;
 
 namespace TestPatterns
 {
+public enum Language2 {
+  SPANISH(new Spanish()), 
+  ENGLISH(new English())
+
+  // This is a member instance.
+
+  private ILanguage translationImpl;
+
+  // And this is the one and only constructor.
+
+  public Language(ILanguage translationImpl) {
+
+    this.translationImpl=translationImpl;
+
+  }
+
+  public String convert(int number) {
+
+    return translationImpl.convert(number);
+
+  }
+	}
 	public enum Language {
 		English,
 		Spanish

@@ -32,26 +32,33 @@ let withdraw amount account =
     else Some acc
     
 let (>>=) m f = Option.bind f m
+
    
 type Lister<'a> =
     | Any of 'a * Lister<'a>
     | Empty
-    
-let rec (<*>) (l:Lister<'a>) (f: 'a -> 'b) : Lister<'b> = 
-    match l with
-       | Any(x, xs) -> Any (f x,  xs <*> f) 
-       | Empty -> Empty 
-    
+
+type A =
+   static member (<*>)(l:Lister<'a>, f: 'a -> 'b)  = 
+           match l with
+              | Any(x, xs) -> Any (f x, (xs <*> f)) 
+              | Empty -> Empty 
+   static member apply(l:'a option, f) = 
+           match l with
+              | Some x -> Some (f x) 
+              | None -> None 
+              
+// let (<*>) l f = A.apply(l,f) 
+
 let acceptable account : int option =
      withdraw 100 account
      >>= deposit 200
      >>= withdraw 100
 
-     
 [<EntryPoint>]
 let main args = 
     let lists = Any (1, Any(2, Empty))
-    let result = lists <*> ((+) 1)
+    let result = A.apply(lists, ((+) 1))
     Console.WriteLine("List: " + result.ToString())
     Console.WriteLine("Account at 100: " + lacceptable(101).ToString())
     Console.WriteLine("Account at 50: " + lacceptable(50).ToString())

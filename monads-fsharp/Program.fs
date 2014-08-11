@@ -33,29 +33,42 @@ let withdraw amount account =
     
 let (>>=) m f = Option.bind f m
 
+type ParserResult<'a> =
+    | Success of 'a * list<char>
+    | Failure
+type Parser<'a> = list<char> -> ParserResult<'a>
+let Return (x:'a):Parser<'a> =
+    let p stream = Success(x,stream)
+    in p
+    
+let Bind (p:Parser<'a>) (f: 'a -> Parser<'b>) : Parser<'b> =
+    let q stream =
+       match p stream with
+         | Success(x, rest) -> (f x) rest
+         | Failure -> Failure
+    in q
+         
+
    
 type Lister<'a> =
     | Any of 'a * Lister<'a>
     | Empty
 
 type A =
-   static member app (l:Lister<'a>, f: 'a -> 'b) =
+   static member appl (l:Lister<'a>, f: 'a -> 'b) =
            match l with
-              | Any(x, xs) -> Any (f x, A.app(xs, f)) 
+              | Any(x, xs) -> Any (f x, A.appl(xs, f)) 
               | Empty -> Empty 
-   static member apply(l:'a option, f) = 
+   static member app(l:'a option, f) = 
            match l with
               | Some x -> Some (f x) 
               | None -> None 
               
-// let (<*>) l f = A.apply(l,f) 
-
 let acceptable account : int option =
      withdraw 100 account
      >>= deposit 200
      >>= withdraw 100
      
-let (<*>) l  f = A.app(l,f)
 
 let rec printer = function 
       | Any(a, ls) -> a.ToString() + ", " + printer ls
@@ -64,8 +77,6 @@ let rec printer = function
 [<EntryPoint>]
 let main args = 
     let lists = Any (1, Any(2, Empty))
-    let result = lists <*> ((+) 1)
-    Console.WriteLine("List: " + (printer result))
     
     let maybe = Some 1
     //let result2 = maybe <*> (+ 1)

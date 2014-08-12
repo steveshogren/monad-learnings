@@ -63,6 +63,7 @@ type ParserBuilder() =
    member x.Return(y) = Return y
    
 let parse = new ParserBuilder()
+
 let (<|>) = Either
 
 let rec Many p : Parser<list<'a>> =
@@ -70,7 +71,7 @@ let rec Many p : Parser<list<'a>> =
         let! x = p
         let! xs = (Many p)
         return x :: xs
-   } <|> Return []
+   } // <|> Return []
    
 type Lister<'a> =
     | Any of 'a * Lister<'a>

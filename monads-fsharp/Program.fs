@@ -6,6 +6,7 @@
 module monadsfsharp.Main
 
 open System
+open monadsfsharp.Parser
 
 let someFunction x y = x + y
 
@@ -33,46 +34,6 @@ let withdraw amount account =
     
 let (>>=) m f = Option.bind f m
 
-
-
-type ParserResult<'a> =
-    | Success of 'a * list<char>
-    | Failure
-type Parser<'a> = list<char> -> ParserResult<'a>
-
-let Either (p1: Parser<'a>) (p2: Parser<'a>) : Parser<'a> =
-    let p stream =
-        match p1 stream with
-          | Failure -> p2 stream
-          | res -> res
-    in p
-
-let Return (x:'a):Parser<'a> =
-    let p stream = Success(x,stream)
-    in p
-    
-let Bind (p:Parser<'a>) (f: 'a -> Parser<'b>) : Parser<'b> =
-    let q stream =
-       match p stream with
-         | Success(x, rest) -> (f x) rest
-         | Failure -> Failure
-    in q
-         
-type ParserBuilder() =
-   member x.Bind(p, f) = Bind p f
-   member x.Return(y) = Return y
-   
-let parse = new ParserBuilder()
-
-let (<|>) = Either
-
-let rec Many p : Parser<list<'a>> =
-    parse {
-        let! x = p
-        let! xs = (Many p)
-        return x :: xs
-   } // <|> Return []
-   
 type Lister<'a> =
     | Any of 'a * Lister<'a>
     | Empty
@@ -99,13 +60,12 @@ let rec printer = function
 
 [<EntryPoint>]
 let main args = 
-    let lists = Any (1, Any(2, Empty))
-    
-    let maybe = Some 1
+    //let lists = Any (1, Any(2, Empty))
+    //let maybe = Some 1
     //let result2 = maybe <*> (+ 1)
-    //Console.WriteLine("Account at 100: " + lacceptable(101).ToString())
+    printfn "%A" (FloatParser ("-1.23e45" |> Seq.toList))
+    //Console.WriteLine(FloatParser)
     //Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
     //Console.WriteLine("Account at 100: " + acceptable(101).ToString())
     //Console.WriteLine("Account at 50: " + acceptable(50).ToString())
     0
-

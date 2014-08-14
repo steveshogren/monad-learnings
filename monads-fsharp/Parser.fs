@@ -29,13 +29,18 @@ module Parser =
        member x.Return(y) = Return y
        
     let parse = new ParserBuilder()
-    
+        
     let CharParser (c:char) : Parser<char> =
         let p stream =
             match stream with
             | x::xs when x = c -> Success(x,xs)
             | _ -> Failure
         in p
+        
+    let AnyCharParser : Parser<char> =
+        ['A'..'z']
+        |> List.map CharParser
+        |> List.reduce Either
         
     let DigitParser : Parser<char> =
         ['0'..'9']
@@ -57,6 +62,14 @@ module Parser =
            let! xs = (Many p)
            return x :: xs
        } 
+    let SexprParser : Parser<char> =
+        parse {
+            let! left = CharParser '('
+            let! expre = AnyCharParser
+            let! right = CharParser '('
+            return expre
+        } 
+        
     let FloatParser : Parser<float> = 
         parse {
             let! s = (CharParser '+' <|> CharParser '-') <|> Return '+'

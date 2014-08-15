@@ -65,8 +65,10 @@ module Parser =
     let SexprParser : Parser<char> =
         parse {
             let! left = CharParser '('
+            let! spaces = Many(CharParser ' ')
             let! expre = AnyCharParser
-            let! right = CharParser '('
+            let! spaces = Many(CharParser ' ')
+            let! right = CharParser ')'
             return expre
         } 
         

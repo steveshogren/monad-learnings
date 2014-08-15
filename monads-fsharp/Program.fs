@@ -64,7 +64,7 @@ let main args =
     //let maybe = Some 1
     //let result2 = maybe <*> (+ 1)
     // printfn "%A" (FloatParser ("-1.23e45" |> Seq.toList))
-    printfn "%A" (SexprParser ("(a)" |> Seq.toList))
+    printfn "%A" (SexprParser ("(  a   )" |> Seq.toList))
     //Console.WriteLine(FloatParser)
     //Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
     //Console.WriteLine("Account at 100: " + acceptable(101).ToString())

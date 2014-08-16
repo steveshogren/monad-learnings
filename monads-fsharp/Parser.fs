@@ -62,12 +62,16 @@ module Parser =
            let! xs = (Many p)
            return x :: xs
        } 
+    let Space : Parser<char> = CharParser ' '
+    let Spaces : Parser<list<char>> = Many(CharParser ' ')
+    let Word : Parser<list<char>> = Many(AnyCharParser)
+    
     let SexprParser : Parser<char> =
         parse {
             let! left = CharParser '('
-            let! spaces = Many(CharParser ' ')
+            let! _ = Spaces
             let! expre = AnyCharParser
-            let! spaces = Many(CharParser ' ')
+            let! _ = Spaces
             let! right = CharParser ')'
             return expre
         } 

@@ -4,6 +4,7 @@ module Parser =
     type ParserResult<'a> =
         | Success of 'a * list<char>
         | Failure
+        
     type Parser<'a> = list<char> -> ParserResult<'a>
 
     let Either (p1: Parser<'a>) (p2: Parser<'a>) : Parser<'a> =
@@ -64,13 +65,17 @@ module Parser =
        } 
     let Space : Parser<char> = CharParser ' '
     let Spaces : Parser<list<char>> = Many(CharParser ' ')
-    let Word : Parser<list<char>> = Many(AnyCharParser)
+    let Word : Parser<string> = 
+        parse {
+            let! chars = Many(AnyCharParser)
+            return chars |>  List.map (fun x -> x.ToString()) |> List.reduce (+)
+        }
     
-    let SexprParser : Parser<char> =
+    let SexprParser : Parser<string> =
         parse {
             let! left = CharParser '('
             let! _ = Spaces
-            let! expre = AnyCharParser
+            let! expre = Word
             let! _ = Spaces
             let! right = CharParser ')'
             return expre
@@ -101,3 +106,4 @@ module Parser =
             } <|> Return [])
             return float( new System.String(s::(l @ e) |> List.toArray))
         }
+ 

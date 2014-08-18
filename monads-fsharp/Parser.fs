@@ -71,14 +71,17 @@ module Parser =
             return chars |>  List.map (fun x -> x.ToString()) |> List.reduce (+)
         }
     
-    let SexprParser : Parser<string> =
+    type Atom = string
+    type SExpr = A of Atom | Comb of list<Atom>
+    
+    let SexprParser : Parser<SExpr> =
         parse {
             let! left = CharParser '('
             let! _ = Spaces
             let! expre = Word
             let! _ = Spaces
             let! right = CharParser ')'
-            return expre
+            return A expre
         } 
         
     let FloatParser : Parser<float> = 

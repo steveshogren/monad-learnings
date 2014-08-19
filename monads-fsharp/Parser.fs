@@ -13,6 +13,18 @@ module Parser =
               | Failure -> p2 stream
               | res -> res
         in p
+        
+    let Righter (p1: Parser<'a>) (p2: Parser<'b>) : Parser<'b> =
+        let p stream =
+            let _ = p1 stream
+            p2 stream
+        in p
+    let Lefter (p1: Parser<'a>) (p2: Parser<'b>) : Parser<'a> =
+        let p stream =
+            let pa1 = p1 stream
+            let _ = p2 stream
+            pa1
+        in p
 
     let Return (x:'a):Parser<'a> =
         let p stream = Success(x,stream)
@@ -67,22 +79,9 @@ module Parser =
     let Spaces : Parser<list<char>> = Many(CharParser ' ')
     let Word : Parser<string> = 
         parse {
-            let! chars = Many(AnyCharParser)
+            let! chars = Many1(AnyCharParser)
             return chars |>  List.map (fun x -> x.ToString()) |> List.reduce (+)
-        }
-    
-    type Atom = string
-    type SExpr = A of Atom | Comb of list<Atom>
-    
-    let SexprParser : Parser<SExpr> =
-        parse {
-            let! left = CharParser '('
-            let! _ = Spaces
-            let! expre = Word
-            let! _ = Spaces
-            let! right = CharParser ')'
-            return A expre
-        } 
+        } <|> Return ""
         
     let FloatParser : Parser<float> = 
         parse {
@@ -108,5 +107,35 @@ module Parser =
                 return e::s::x
             } <|> Return [])
             return float( new System.String(s::(l @ e) |> List.toArray))
+        }
+    
+    type Ident = string
+    type Atom = string
+    type SExpr = A of Atom | Comb of list<Atom>
+    
+    let (%>) = Righter
+    let (<%) = Lefter
+  
+    let WordIdent : Parser<Atom> =
+        parse {
+            let! word = Word
+            return word
+        } <|> Return ""
+        
+    let SexprParser : Parser<SExpr> =
+        parse {
+            let! _ = CharParser '(' 
+            let! _ = Spaces
+            let! expre = Word
+            let! _ = Spaces   
+            let!  _ = CharParser ')'
+            return A expre
+        } <|> parse {
+            let! _ = CharParser '(' 
+            let! _ = Spaces
+            let! expre = Many(Word <% Spaces)
+            let! _ = Spaces   
+            let!  _ = CharParser ')'
+            return Comb expre
         }
  

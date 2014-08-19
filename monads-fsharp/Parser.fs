@@ -75,13 +75,15 @@ module Parser =
            let! xs = (Many p)
            return x :: xs
        } 
+       
     let Space : Parser<char> = CharParser ' '
-    let Spaces : Parser<list<char>> = Many(CharParser ' ')
+    let Spaces : Parser<list<char>> = Many(Space)
+    
     let Word : Parser<string> = 
         parse {
             let! chars = Many1(AnyCharParser)
             return chars |>  List.map (fun x -> x.ToString()) |> List.reduce (+)
-        } <|> Return ""
+        } 
         
     let FloatParser : Parser<float> = 
         parse {
@@ -118,10 +120,10 @@ module Parser =
     
     let NextWord : Parser<string> =
         parse {
-            let! _ = Spaces
+            let! s = Spaces
             let! w = Word
-            let! _ = Spaces
-            return w
+            let! t = Spaces
+            return w 
         } 
   
     let SexprParser : Parser<SExpr> =
@@ -133,6 +135,7 @@ module Parser =
         } <|> parse {
             let! _ = CharParser '(' 
             let! expre = Many NextWord 
+            //let! expre2 = NextWord 
             let!  _ = CharParser ')'
             return Comb expre
         }

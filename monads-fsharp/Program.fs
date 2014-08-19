@@ -68,6 +68,7 @@ let main args =
     printfn "%A" (SexprParser ("(     )" |> Seq.toList))
     printfn "%A" (SexprParser ("(word)" |> Seq.toList))
     printfn "%A" (SexprParser ("(word to )" |> Seq.toList))
+    printfn "%A" (SexprParser ("(word to )     test" |> Seq.toList))
     //Console.WriteLine(FloatParser)
     //Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
     //Console.WriteLine("Account at 100: " + acceptable(101).ToString())

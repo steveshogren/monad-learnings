@@ -115,26 +115,24 @@ module Parser =
     
     let (%>) = Righter
     let (<%) = Lefter
-  
-    let WordIdent : Parser<Atom> =
+    
+    let NextWord : Parser<string> =
         parse {
-            let! word = Word
-            return word
-        } <|> Return ""
-        
+            let! _ = Spaces
+            let! w = Word
+            let! _ = Spaces
+            return w
+        } 
+  
     let SexprParser : Parser<SExpr> =
         parse {
             let! _ = CharParser '(' 
-            let! _ = Spaces
-            let! expre = Word
-            let! _ = Spaces   
+            let! expre = NextWord
             let!  _ = CharParser ')'
             return A expre
         } <|> parse {
             let! _ = CharParser '(' 
-            let! _ = Spaces
-            let! expre = Many(Word <% Spaces)
-            let! _ = Spaces   
+            let! expre = Many NextWord 
             let!  _ = CharParser ')'
             return Comb expre
         }

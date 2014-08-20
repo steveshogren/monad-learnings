@@ -111,32 +111,42 @@ module Parser =
             return float( new System.String(s::(l @ e) |> List.toArray))
         }
     
-    type Ident = string
-    type Atom = string
-    type SExpr = A of Atom | Comb of list<Atom>
-    
+    type Atom = Str of string | Digit of float
+    type SExpr = Atom of Atom | Sexprs of list<SExpr>
+    // (test)
+    // test
+    // (test 1 (+ 1 2)) => SExpr (Comb test 1 (SExpr (Comb + 1 2)))
     let (%>) = Righter
     let (<%) = Lefter
     
-    let NextWord : Parser<string> =
+    let NextWord : Parser<Atom> =
         parse {
             let! s = Spaces
             let! w = Word
             let! t = Spaces
-            return w 
+            return Str w 
         } 
-  
-    let SexprParser : Parser<SExpr> =
+    let NextDigit : Parser<Atom> =
         parse {
-            let! _ = CharParser '(' 
-            let! expre = NextWord
-            let!  _ = CharParser ')'
-            return A expre
-        } <|> parse {
-            let! _ = CharParser '(' 
-            let! expre = Many NextWord 
-            //let! expre2 = NextWord 
-            let!  _ = CharParser ')'
-            return Comb expre
+            let! s = Spaces
+            let! w = FloatParser
+            let! t = Spaces
+            return Digit w 
+        } 
+        
+    let AtomParser : Parser<Atom> = NextDigit <|> NextWord
+    
+    let rec SexprParser : Parser<SExpr> =
+        parse {
+            let! _ = CharParser '('
+            let! t = (parse {
+                let! expre = AtomParser
+                return Atom expre
+            } <|> parse {
+                        let! expre = Many SexprParser 
+                        return Sexprs expre
+                        })
+            let! _ = CharParser ')'
+            return t
         }
  

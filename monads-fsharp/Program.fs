@@ -60,10 +60,15 @@ let rec printer = function
 
 [<EntryPoint>]
 let main args = 
+    let printNTest s e =
+        match SexprParser (s |> Seq.toList) with
+            | e -> printfn "Passed - %A" "(  wordstoo   )" 
+            | _ -> printfn "Failed - %A" "(  wordstoo   )" 
     //let lists = Any (1, Any(2, Empty))
     //let maybe = Some 1
     //let result2 = maybe <*> (+ 1)
     // printfn "%A" (FloatParser ("-1.23e45" |> Seq.toList))
+    // printNTest "(  wordstoo   )" (Atom (Str "wordstoo"))
     printfn "%A" (SexprParser ("(  wordstoo   )" |> Seq.toList))
     printfn "%A" (SexprParser ("(     )" |> Seq.toList))
     printfn "%A" (SexprParser ("()" |> Seq.toList))

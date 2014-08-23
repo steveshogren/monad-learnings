@@ -52,31 +52,13 @@ let acceptable account : int option =
      withdraw 100 account
      >>= deposit 200
      >>= withdraw 100
-     
-
-let rec printer = function 
-      | Any(a, ls) -> a.ToString() + ", " + printer ls
-      | Empty -> ""
 
 [<EntryPoint>]
 let main args = 
-    let printNTest s e =
-        match SexprParser (s |> Seq.toList) with
-            | e -> printfn "Passed - %A" "(  wordstoo   )" 
-            | _ -> printfn "Failed - %A" "(  wordstoo   )" 
-    //let lists = Any (1, Any(2, Empty))
-    //let maybe = Some 1
-    //let result2 = maybe <*> (+ 1)
-    // printfn "%A" (FloatParser ("-1.23e45" |> Seq.toList))
-    // printNTest "(  wordstoo   )" (Atom (Str "wordstoo"))
     printfn "%A" (SexprParser ("(  wordstoo   )" |> Seq.toList))
     printfn "%A" (SexprParser ("(     )" |> Seq.toList))
     printfn "%A" (SexprParser ("()" |> Seq.toList))
     printfn "%A" (SexprParser ("(word)" |> Seq.toList))
     printfn "%A" (SexprParser ("((1)(this))" |> Seq.toList))
     printfn "%A" (SexprParser ("(add 1 2)" |> Seq.toList))
-    //Console.WriteLine(FloatParser)
-    //Console.WriteLine("Account at 50: " + lacceptable(50).ToString())
-    //Console.WriteLine("Account at 100: " + acceptable(101).ToString())
-    //Console.WriteLine("Account at 50: " + acceptable(50).ToString())
     0

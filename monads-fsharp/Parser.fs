@@ -140,7 +140,7 @@ module Parser =
         let NestedSExpr() = parse { let! expre = Many SexprParser
                                   return Sexprs expre }
         let AnAtom() = parse { let! expre = AtomParser
-                           return Atom expre }
+                              return Atom expre }
         parse {
             let! _ = CharParser '('
             let! t = (AnAtom() <|> NestedSExpr() <|> EmptyList())

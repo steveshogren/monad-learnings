@@ -112,7 +112,7 @@ module Parser =
         }
     
     type Atom = Str of string | Digit of float
-    type SExpr = Atom of Atom | Sexprs of list<SExpr> | EList
+    type SExpr = Atom of Atom | Sexprs of list<SExpr> | EList | Atoms of list<Atom>
     
     let (%>) = Righter
     let (<%) = Lefter
@@ -137,14 +137,21 @@ module Parser =
     let rec SexprParser : Parser<SExpr> =
         let EmptyList() = parse { let! s = Spaces 
                                   return EList }
-        let NestedSExpr() = parse { let! expre = Many SexprParser
-                                  return Sexprs expre }
+        let NestedSExpr() = parse { 
+                                    let! expre = Many SexprParser
+                                    return Sexprs expre }
         let AnAtom() = parse { let! expre = AtomParser
                               return Atom expre }
+        let ManyAtoms() = parse {
+                               let! t = Many AtomParser 
+                               return Atoms t }
         parse {
             let! _ = CharParser '('
-            let! t = (AnAtom() <|> NestedSExpr() <|> EmptyList())
+            let! t = (ManyAtoms() <|> NestedSExpr() <|> EmptyList())
             let! _ = CharParser ')'
             return t
         }
+        
+    let callSexpParser s = 
+        s |> Seq.toList |> SexprParser
  

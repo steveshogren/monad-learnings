@@ -138,17 +138,22 @@ module Parser =
 module Parse = 
     open Parser
     let rec SexprParser : Parser<SExpr> =
-        let EmptyList() = parse { let! s = Spaces 
+        let EmptyList() = parse { let! _ = Spaces 
                                   return EList }
         let AnAtom() = parse { let! expre = AtomParser
-                              return Atom expre }
+                               return Atom expre }
+        let SExprP() = parse {
+                            let! i = Many ( AnAtom() <|> SexprParser )
+                            return Sexprs i
+                        }
         parse {
             let! _ = CharParser '('
-            let! t = parse {
-                let! i = Many ( AnAtom() <|> SexprParser )
-                return Sexprs i
-            }
-            //<|> EmptyList()
+            let! t = EmptyList()
+            let! _ = CharParser ')'
+            return t
+        } <|> parse {
+            let! _ = CharParser '('
+            let! t = SExprP() 
             let! _ = CharParser ')'
             return t
         }

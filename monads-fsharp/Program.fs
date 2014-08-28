@@ -6,7 +6,7 @@
 module monadsfsharp.Main
 
 open System
-open monadsfsharp.Parser
+open monadsfsharp.Parse
 
 let someFunction x y = x + y
 

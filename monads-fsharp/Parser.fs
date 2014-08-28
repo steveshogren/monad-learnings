@@ -112,7 +112,7 @@ module Parser =
         }
     
     type Atom = Str of string | Digit of float
-    type SExpr = Atom of Atom | Sexprs of list<SExpr> | EList | Atoms of list<Atom>
+    type SExpr = Atom of Atom | Sexprs of list<SExpr> | EList
     
     let (%>) = Righter
     let (<%) = Lefter
@@ -134,20 +134,21 @@ module Parser =
         
     let AtomParser : Parser<Atom> = NextDigit <|> NextWord
     
+#nowarn "40"
+module Parse = 
+    open Parser
     let rec SexprParser : Parser<SExpr> =
         let EmptyList() = parse { let! s = Spaces 
                                   return EList }
-        let NestedSExpr() = parse { 
-                                    let! expre = Many SexprParser
-                                    return Sexprs expre }
         let AnAtom() = parse { let! expre = AtomParser
                               return Atom expre }
-        let ManyAtoms() = parse {
-                               let! t = Many AtomParser 
-                               return Atoms t }
         parse {
             let! _ = CharParser '('
-            let! t = (ManyAtoms() <|> NestedSExpr() <|> EmptyList())
+            let! t = parse {
+                let! i = Many ( AnAtom() <|> SexprParser )
+                return Sexprs i
+            }
+            //<|> EmptyList()
             let! _ = CharParser ')'
             return t
         }

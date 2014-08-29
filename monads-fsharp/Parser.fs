@@ -147,14 +147,18 @@ module Parse =
                             return Sexprs i
                         }
         parse {
+            let! _ = Spaces 
             let! _ = CharParser '('
             let! t = EmptyList()
             let! _ = CharParser ')'
+            let! _ = Spaces 
             return t
         } <|> parse {
+            let! _ = Spaces 
             let! _ = CharParser '('
             let! t = SExprP() 
             let! _ = CharParser ')'
+            let! _ = Spaces 
             return t
         }
         

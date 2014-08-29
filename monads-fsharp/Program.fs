@@ -57,8 +57,10 @@ let acceptable account : int option =
 let main args = 
     printfn "%A" (SexprParser ("(  wordstoo   )" |> Seq.toList))
     printfn "%A" (SexprParser ("(     )" |> Seq.toList))
+    printfn "%A" (SexprParser ("   ()  " |> Seq.toList))
     printfn "%A" (SexprParser ("()" |> Seq.toList))
     printfn "%A" (SexprParser ("(word)" |> Seq.toList))
-    printfn "%A" (SexprParser ("((1)(this))" |> Seq.toList))
+    printfn "%A" (SexprParser ("( (1)  (this))" |> Seq.toList))
     printfn "%A" (SexprParser ("(add 1 2)" |> Seq.toList))
+    printfn "%A" (SexprParser ("(add (a 1 2) (b 2 1))" |> Seq.toList))
     0
